@@ -9,6 +9,7 @@ export default ({userNumbers}: { userNumbers: number }) => (
           title="网站信息"
           // extra={<a href="#">More</a>}
           // style={{width: 400}}
+          headStyle={{backgroundColor:"lightgray"}}
         >
           <Card type="inner" title="简介">
             <p>CMKGLab(Chinese Medicine Know Graph Lab) 是中医药数据知识图谱平台.</p>

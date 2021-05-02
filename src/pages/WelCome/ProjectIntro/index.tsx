@@ -30,6 +30,7 @@ export default () => {
       <div>
         <Card
           title="项目情况"
+          headStyle={{backgroundColor:"lightgray"}}
         >
           {projectNumbers.map(item => <Statistic key={item.status} title={item.status} value={item.numbers}/>)}
         </Card>

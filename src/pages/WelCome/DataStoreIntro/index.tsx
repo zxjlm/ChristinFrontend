@@ -9,6 +9,7 @@ export default ({dataItems}: { dataItems: dataItemsState[] }) => {
       <div>
         <Card
           title="数据存量"
+          headStyle={{backgroundColor:"lightgray"}}
         >
           {dataItems.map(item => <Statistic key={item.name} title={item.name} value={item.value}/>)}
         </Card>
