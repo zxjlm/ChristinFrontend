@@ -101,9 +101,9 @@ export const layout: RunTimeLayoutConfig = ({initialState}) => {
   return {
     rightContentRender: () => <RightContent/>,
     disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.s_name,
-    },
+    // waterMarkProps: {
+    //   content: initialState?.currentUser?.s_name,
+    // },
     footerRender: () => <Footer/>,
     onPageChange: () => {
       const {location} = history;
