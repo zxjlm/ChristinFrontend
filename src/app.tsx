@@ -1,20 +1,20 @@
-import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { PageLoading } from '@ant-design/pro-layout';
-import { notification } from 'antd';
-import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
-import { getIntl, getLocale, history, Link } from 'umi';
+import type {Settings as LayoutSettings} from '@ant-design/pro-layout';
+import {PageLoading} from '@ant-design/pro-layout';
+import {notification} from 'antd';
+import type {RequestConfig, RunTimeLayoutConfig} from 'umi';
+import {getIntl, getLocale, history, Link} from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import type { ResponseError } from 'umi-request';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import type {ResponseError} from 'umi-request';
+import {currentUser as queryCurrentUser} from './services/ant-design-pro/api';
+import {BookOutlined, LinkOutlined} from '@ant-design/icons';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
-  loading: <PageLoading />,
+  loading: <PageLoading/>,
 };
 
 /**
@@ -28,6 +28,7 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     try {
       const currentUser = await queryCurrentUser();
+      console.log('user', currentUser)
       return currentUser;
     } catch (error) {
       history.push(loginPath);
@@ -73,11 +74,11 @@ export async function getInitialState(): Promise<{
  */
 export const request: RequestConfig = {
   errorHandler: (error: ResponseError) => {
-    const { messages } = getIntl(getLocale());
-    const { response } = error;
+    const {messages} = getIntl(getLocale());
+    const {response} = error;
 
     if (response && response.status) {
-      const { status, statusText, url } = response;
+      const {status, statusText, url} = response;
       const requestErrorMessage = messages['app.request.error'];
       const errorMessage = `${requestErrorMessage} ${status}: ${url}`;
       const errorDescription = messages[`app.request.${status}`] || statusText;
@@ -98,16 +99,16 @@ export const request: RequestConfig = {
 };
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
-export const layout: RunTimeLayoutConfig = ({ initialState }) => {
+export const layout: RunTimeLayoutConfig = ({initialState}) => {
   return {
-    rightContentRender: () => <RightContent />,
+    rightContentRender: () => <RightContent/>,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.currentUser?.name,
     },
-    footerRender: () => <Footer />,
+    footerRender: () => <Footer/>,
     onPageChange: () => {
-      const { location } = history;
+      const {location} = history;
       // 如果没有登录，重定向到 login
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
@@ -115,15 +116,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     },
     links: isDev
       ? [
-          <Link to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>openAPI 文档</span>
-          </Link>,
-          <Link to="/~docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
+        <Link to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined/>
+          <span>openAPI 文档</span>
+        </Link>,
+        <Link to="/~docs">
+          <BookOutlined/>
+          <span>业务组件文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面

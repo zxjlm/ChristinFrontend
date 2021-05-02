@@ -4,7 +4,7 @@ import { request } from 'umi';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<API.CurrentUser>('/api/currentUser', {
+  return request<API.CurrentUser>('/main/api/v2/currentUser', {
     method: 'GET',
     ...(options || {}),
   });
@@ -20,7 +20,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+  return request<API.LoginResult>('/api/accounts/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
