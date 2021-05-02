@@ -53,7 +53,7 @@ export default (): React.ReactNode => {
       <Row>
         <Col span={8}><Introduction userNumbers={userNumbers}/></Col>
         <Col span={5} offset={1}><DataStoreIntro dataItems={dataItems}/></Col>
-        <Col span={8} offset={1}><ProjectIntro/></Col>
+        <Col span={4} offset={1}><ProjectIntro/></Col>
       </Row>
       <Card>
         <Alert
