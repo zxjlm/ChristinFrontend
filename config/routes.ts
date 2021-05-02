@@ -22,6 +22,12 @@
     component: './Welcome',
   },
   {
+    path: '/project-management',
+    name: 'project-management',
+    icon: 'smile',
+    component: './ProjectManagement',
+  },
+  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
