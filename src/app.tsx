@@ -27,9 +27,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const currentUser = await queryCurrentUser();
-      console.log('user', currentUser)
-      return currentUser;
+      return await queryCurrentUser();
     } catch (error) {
       history.push(loginPath);
     }
@@ -104,7 +102,7 @@ export const layout: RunTimeLayoutConfig = ({initialState}) => {
     rightContentRender: () => <RightContent/>,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.s_name,
     },
     footerRender: () => <Footer/>,
     onPageChange: () => {
