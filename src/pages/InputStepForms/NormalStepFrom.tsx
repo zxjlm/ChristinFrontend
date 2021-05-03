@@ -1,86 +1,113 @@
-import {message, Modal} from "antd";
-import {ProFormText, ProFormTextArea, StepsForm} from "@ant-design/pro-form";
+import { Card, message, Modal } from 'antd';
+import { ProFormText, ProFormTextArea, StepsForm } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
-import {waitTime} from "@/utils/useful";
+import { waitTime } from '@/utils/useful';
+import { knowledgeExtract } from '@/services/site-data/api';
+import AnnotationCard from '@/components/SingleAnnotation/index';
+import { useState } from 'react';
+import { MyAPI } from '@/services/site-data/typings';
 
+export default ({
+  visible,
+  setVisible,
+}: {
+  visible: boolean;
+  setVisible: (props: boolean) => void;
+}) => {
+  const [docs, setDocs] = useState<MyAPI.rawKnowledgeMessageResults>({ labels: [], nerDocs: [] });
 
-export default ({visible, setVisible}: { visible: boolean, setVisible: (props: boolean) => void }) => {
   const stopOneFinish = async (formData: any) => {
-    console.log(formData)
-  }
+    knowledgeExtract(formData).then((response) => {
+      setDocs(response);
+    });
+    return true;
+  };
 
-  return <StepsForm
-    onFinish={async (values) => {
-      console.log(values);
-      await waitTime(1000);
-      setVisible(false);
-      message.success('提交成功');
-    }}
-    formProps={{
-      validateMessages: {
-        required: '此项为必填项',
-      },
-    }}
-    stepsFormRender={(dom, submitter) => {
-      return (
-        <Modal
-          title="分步表单"
-          width={1000}
-          onCancel={() => setVisible(false)}
-          visible={visible}
-          footer={submitter}
-          destroyOnClose
-        >
-          {dom}
-        </Modal>
-      );
-    }}
-  >
-    <StepsForm.StepForm
-      name="dataInput"
-      title="数据录入"
-      onFinish={stopOneFinish}
+  return (
+    <StepsForm
+      onFinish={async (values) => {
+        console.log(values);
+        await waitTime(1000);
+        setVisible(false);
+        message.success('提交成功');
+      }}
+      formProps={{
+        validateMessages: {
+          required: '此项为必填项',
+        },
+      }}
+      stepsFormRender={(dom, submitter) => {
+        return (
+          <Modal
+            title="分步表单"
+            width={1000}
+            onCancel={() => setVisible(false)}
+            visible={visible}
+            footer={submitter}
+            destroyOnClose
+          >
+            {dom}
+          </Modal>
+        );
+      }}
     >
-      <ProFormText
-        name="project-name"
-        label="项目名称"
-        width="md"
-        tooltip="最长为 24 位，用于标定的唯一 id"
-        placeholder="请输入项目名称"
-        rules={[{required: true}]}
-      />
-      <ProFormTextArea name="project-description"
-                       label="项目描述"
-                       width="lg"
-                       placeholder="请输入项目描述(250字以内)"/>
-      <ProCard
-        tabs={{
-          type: 'card',
-        }}
-      >
-        <ProCard.TabPane key="tab1" tab="手动输入">
-          <ProFormTextArea name="message" label="分析内容" width="lg"
-                           initialValue={'近一周饮食不当,一度腹泻,日3次,泻下后精神疲烦,时有低热,怕风,口干,痰中夹有血丝,左侧胸痛时作'}
-                           placeholder="请输入分析内容"/>
-        </ProCard.TabPane>
-        <ProCard.TabPane key="tab2" tab="从Excel或CSV导入">
-          内容二
-        </ProCard.TabPane>
-        <ProCard.TabPane key="tab3" tab="从文本文件导入">
-          内容二
-        </ProCard.TabPane>
-      </ProCard>
-    </StepsForm.StepForm>
-    <StepsForm.StepForm name="knowledgeExtract" title="知识抽取">
-    </StepsForm.StepForm>
-    <StepsForm.StepForm name="knowledgeResult" title="抽取结果">
-
-    </StepsForm.StepForm>
-    <StepsForm.StepForm name="buildGraph" title="构建图数据库">
-
-    </StepsForm.StepForm>
-    <StepsForm.StepForm name="buildResult" title="图数据库构建结果">
-
-    </StepsForm.StepForm>
-  </StepsForm>
-}
+      <StepsForm.StepForm name="dataInput" title="数据录入" onFinish={stopOneFinish}>
+        <ProFormText
+          name="project-name"
+          label="项目名称"
+          width="md"
+          tooltip="最长为 24 位，用于标定的唯一 id"
+          placeholder="请输入项目名称"
+          rules={[{ required: true }]}
+        />
+        <ProFormTextArea
+          name="project-description"
+          label="项目描述"
+          width="lg"
+          placeholder="请输入项目描述(250字以内)"
+        />
+        <ProCard
+          tabs={{
+            type: 'card',
+          }}
+        >
+          <ProCard.TabPane key="tab1" tab="手动输入">
+            <ProFormTextArea
+              name="message"
+              label="分析内容"
+              width="lg"
+              initialValue={
+                '近一周饮食不当,一度腹泻,日3次,泻下后精神疲烦,时有低热,怕风,口干,痰中夹有血丝,左侧胸痛时作'
+              }
+              placeholder="请输入分析内容"
+            />
+          </ProCard.TabPane>
+          <ProCard.TabPane key="tab2" tab="从Excel或CSV导入">
+            内容一
+          </ProCard.TabPane>
+          <ProCard.TabPane key="tab3" tab="从文本文件导入">
+            内容二
+          </ProCard.TabPane>
+        </ProCard>
+      </StepsForm.StepForm>
+      <StepsForm.StepForm name="knowledgeResult" title="抽取结果">
+        <Card>
+          {docs.nerDocs.map((doc) => (
+            <Card
+              type="inner"
+              key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
+            >
+              <AnnotationCard
+                labels={docs.labels}
+                annotationsDefault={doc.annotations}
+                text={doc.text}
+              />
+            </Card>
+          ))}
+        </Card>
+      </StepsForm.StepForm>
+      <StepsForm.StepForm name="buildGraph" title="构建图数据库"></StepsForm.StepForm>
+      <StepsForm.StepForm name="buildResult" title="图数据库构建结果"></StepsForm.StepForm>
+    </StepsForm>
+  );
+};

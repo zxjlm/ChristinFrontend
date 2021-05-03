@@ -1,14 +1,22 @@
-import {request} from 'umi';
+import { request } from 'umi';
+import { MyAPI } from '@/services/site-data/typings';
 
-export const websiteBasicData = async (options?: Record<string, any>) => (
-  request<API.basicData>('/main/api/v2/get_website_info', {
+export const websiteBasicData = async (options?: Record<string, any>) =>
+  request<MyAPI.basicData>('/main/api/v2/get_website_info', {
     method: 'GET',
     ...(options || {}),
-  })
-)
+  });
 
-export const projectRuntime = async () => (
-  request<API.projectRuntimeData>('/main/api/v2/get_project_runtime', {
+export const projectRuntime = async () =>
+  request<MyAPI.projectRuntimeData>('/main/api/v2/get_project_runtime', {
     method: 'GET',
-  })
-)
+  });
+
+export const knowledgeExtract = async (body: MyAPI.rawKnowledgeMessageParams) =>
+  request<MyAPI.rawKnowledgeMessageResults>('main/api/v2/extractKnowledge', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+  });
