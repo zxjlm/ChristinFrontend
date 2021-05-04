@@ -1,5 +1,10 @@
-import { Card, message, Modal } from 'antd';
-import { ProFormText, ProFormTextArea, StepsForm } from '@ant-design/pro-form';
+import { Card, message, Modal, Space } from 'antd';
+import {
+  ProFormText,
+  ProFormTextArea,
+  ProFormUploadDragger,
+  StepsForm,
+} from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import { waitTime } from '@/utils/useful';
 import { knowledgeExtract } from '@/services/site-data/api';
@@ -52,20 +57,22 @@ export default ({
       }}
     >
       <StepsForm.StepForm name="dataInput" title="数据录入" onFinish={stopOneFinish}>
-        <ProFormText
-          name="project-name"
-          label="项目名称"
-          width="md"
-          tooltip="最长为 24 位，用于标定的唯一 id"
-          placeholder="请输入项目名称"
-          rules={[{ required: true }]}
-        />
-        <ProFormTextArea
-          name="project-description"
-          label="项目描述"
-          width="lg"
-          placeholder="请输入项目描述(250字以内)"
-        />
+        <div style={{ marginLeft: '30px' }}>
+          <ProFormText
+            name="project-name"
+            label="项目名称"
+            width="md"
+            tooltip="最长为 24 位，用于标定的唯一 id"
+            placeholder="请输入项目名称"
+            rules={[{ required: true }]}
+          />
+          <ProFormTextArea
+            name="project-description"
+            label="项目描述"
+            width="lg"
+            placeholder="请输入项目描述(250字以内)"
+          />
+        </div>
         <ProCard
           tabs={{
             type: 'card',
@@ -83,27 +90,42 @@ export default ({
             />
           </ProCard.TabPane>
           <ProCard.TabPane key="tab2" tab="从Excel或CSV导入">
-            内容一
+            <ProFormUploadDragger
+              max={4}
+              name="excel-or-csv-file"
+              title={'从Excel或CSV导入'}
+              description={'数据列名指定为"data"'}
+              accept={'.csv,.xls,.xlsx'}
+              action={'/main/api/v2/extract_from_table_file'}
+            />
           </ProCard.TabPane>
           <ProCard.TabPane key="tab3" tab="从文本文件导入">
-            内容二
+            <ProFormUploadDragger
+              max={4}
+              name="text-file"
+              title={'从文本文件导入'}
+              accept={'.txt'}
+              action={'/main/api/v2/extract_from_text'}
+            />
           </ProCard.TabPane>
         </ProCard>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="knowledgeResult" title="抽取结果">
         <Card>
-          {docs.nerDocs.map((doc) => (
-            <Card
-              type="inner"
-              key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
-            >
-              <AnnotationCard
-                labels={docs.labels}
-                annotationsDefault={doc.annotations}
-                text={doc.text}
-              />
-            </Card>
-          ))}
+          <Space direction="vertical">
+            {docs.nerDocs.map((doc) => (
+              <Card
+                type="inner"
+                key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
+              >
+                <AnnotationCard
+                  labels={docs.labels}
+                  annotationsDefault={doc.annotations}
+                  text={doc.text}
+                />
+              </Card>
+            ))}
+          </Space>
         </Card>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="buildGraph" title="构建图数据库"></StepsForm.StepForm>
