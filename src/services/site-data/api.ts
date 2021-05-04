@@ -20,3 +20,12 @@ export const knowledgeExtract = async (body: MyAPI.rawKnowledgeMessageParams) =>
     },
     data: body,
   });
+
+export const startBuildSandbox = async (body: MyAPI.startBuildSandbox) =>
+  request<MyAPI.startBuildSandboxResult>('main/api/v2/api/build_sandbox', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+  });

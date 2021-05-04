@@ -1,4 +1,4 @@
-import { Card, message, Modal, Space } from 'antd';
+import { Card, message, Modal, Space, Switch } from 'antd';
 import {
   ProFormText,
   ProFormTextArea,
@@ -7,11 +7,9 @@ import {
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import { waitTime } from '@/utils/useful';
-import { knowledgeExtract } from '@/services/site-data/api';
+import { knowledgeExtract, startBuildSandbox } from '@/services/site-data/api';
 import type { annotationType, labelType } from '@/components/SingleAnnotation';
 import AnnotationCard from '@/components/SingleAnnotation/index';
-// import { useState } from 'react';
-// import type { MyAPI } from '@/services/site-data/typings';
 import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
 
@@ -23,6 +21,12 @@ export default ({
   setVisible: (props: boolean) => void;
 }) => {
   const [labels, setLabels] = useState<labelType[]>([]);
+  // const [startPoll, setStartPoll] = useState(false);
+  const [needEmail, setNeedEmail] = useState(true);
+  const [projectInfo, setProjectInfo] = useState({
+    projectName: 'undefined',
+    projectDescription: '',
+  });
   // @ts-ignore
   const { nerDocs, setNerDocs } = useModel('nerDocs', (model) => ({
     nerDocs: model.nerDocs,
@@ -31,6 +35,10 @@ export default ({
 
   const stopOneFinish = async (formData: any) => {
     knowledgeExtract(formData).then((response) => {
+      setProjectInfo({
+        projectName: formData['project-name'],
+        projectDescription: formData['project-description'],
+      });
       setNerDocs(response.nerDocs);
       setLabels(response.labels);
     });
@@ -38,7 +46,9 @@ export default ({
   };
 
   const stopTwoFinish = async () => {
-    // console.log(docs)
+    startBuildSandbox({ ...projectInfo, needEmail, data: nerDocs }).then((response) => {
+      console.log(response);
+    });
   };
 
   return (
@@ -125,7 +135,7 @@ export default ({
         </ProCard>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="knowledgeResult" title="抽取结果" onFinish={stopTwoFinish}>
-        <Card>
+        <Card title={'复核标注结果'}>
           <Space direction="vertical">
             {nerDocs.map(
               (doc: { annotations: annotationType[]; text: string }, list_id: number) => (
@@ -144,6 +154,14 @@ export default ({
             )}
           </Space>
         </Card>
+        <div style={{ marginLeft: '30px', marginTop: '10px' }}>
+          <Switch
+            checkedChildren={'使用邮件通知'}
+            unCheckedChildren={'不需要邮件'}
+            defaultChecked={true}
+            onChange={(checked) => setNeedEmail(checked)}
+          />
+        </div>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="buildGraph" title="构建图数据库"></StepsForm.StepForm>
       <StepsForm.StepForm name="buildResult" title="图数据库构建结果"></StepsForm.StepForm>

@@ -50,4 +50,17 @@ declare namespace MyAPI {
     labels: labelType[];
     nerDocs: nerDoc[];
   };
+
+  type startBuildSandbox = {
+    data: nerDoc[];
+    projectName: string;
+    projectDescription: string;
+    needEmail: boolean;
+  };
+
+  type startBuildSandboxResult = {
+    code: number;
+    msg: string;
+    task_id: string;
+  };
 }
