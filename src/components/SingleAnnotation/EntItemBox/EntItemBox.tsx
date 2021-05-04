@@ -4,14 +4,11 @@ import EntItem from '../EntItem/EntItem';
 import 'antd/dist/antd.css';
 import './index.css';
 import { Dropdown, Menu } from 'antd';
+import { useModel } from '@@/plugin-model/useModel';
 
 interface EntItemBoxProps {
   labels: labelType[];
   text: string;
-  entities: annotationType[];
-  deleteAnnotation: (annotationId: number) => void;
-  updateEntity: (labelId: number, annotationId: number) => void;
-  addEntity: (start: number, end: number, labelId: number) => void;
   list_id: number;
 }
 
@@ -23,24 +20,22 @@ interface chunkState {
   newline?: boolean;
 }
 
-export default ({
-  labels,
-  text,
-  entities,
-  deleteAnnotation,
-  updateEntity,
-  addEntity,
-  list_id,
-}: EntItemBoxProps) => {
+export default ({ labels, text, list_id }: EntItemBoxProps) => {
   const [renderChunks, setRenderChunks] = useState<chunkState[]>([]);
   const [position, setPosition] = useState({ start: 0, end: 0, x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
+  // @ts-ignore
+  const { nerDocs, addEntity, deleteAnnotation } = useModel('nerDocs', (model) => ({
+    nerDocs: model.nerDocs,
+    addEntity: model.addEntity,
+    deleteAnnotation: model.deleteEntity,
+  }));
 
   // eslint-disable-next-line no-console
-  console.log('update', entities);
+  console.log('update', nerDocs[list_id].annotations);
 
   const sortedEntities: () => annotationType[] = () => {
-    return entities
+    return nerDocs[list_id].annotations
       .slice()
       .sort(
         (a: { startOffset: number }, b: { startOffset: number }) => a.startOffset - b.startOffset,
@@ -147,7 +142,7 @@ export default ({
       return false;
     }
     // eslint-disable-next-line no-restricted-syntax
-    for (const entity of entities) {
+    for (const entity of nerDocs[list_id].annotations) {
       if (entity.startOffset <= start_ && start_ < entity.endOffset) {
         return false;
       }
@@ -176,7 +171,7 @@ export default ({
     const deleteElem = e.path.filter((elem: any) => elem.className === 'delete');
     if (deleteElem.length !== 0) {
       const inner_id = Number(deleteElem[0].name.replace('close', ''));
-      deleteAnnotation(inner_id);
+      deleteAnnotation(inner_id, list_id);
     } else if (e.target.className === 'highlight__label') {
       // eslint-disable-next-line no-console
       console.log('open trigger', e);
@@ -197,7 +192,7 @@ export default ({
     return () => {
       if (cls[list_id]) cls[list_id].removeEventListener('mouseup', handleOpen);
     };
-  }, [entities]);
+  }, [nerDocs]);
 
   // const assignLabel = (labelId: number) => {
   //     if (validateSpan()) {
@@ -221,8 +216,9 @@ export default ({
               label={chunk.label}
               color={chunk.color}
               content={chunk.text}
-              updateEntity={updateEntity}
+              // updateEntity={updateEntity}
               item_id={chunk.id}
+              list_id={list_id}
             />
           );
         return chunk.text;
@@ -234,8 +230,7 @@ export default ({
               <Menu.Item
                 key={item.id}
                 onClick={() => {
-                  addEntity(position.start, position.end, item.id);
-                  setPosition({ ...position });
+                  addEntity(position.start, position.end, item.id, list_id);
                   setShowMenu(false);
                 }}
               >

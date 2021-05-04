@@ -1,4 +1,4 @@
-import { annotationType, labelType } from '@/components/SingleAnnotation';
+import type { annotationType, labelType } from '@/components/SingleAnnotation';
 
 declare namespace MyAPI {
   type basicData = {

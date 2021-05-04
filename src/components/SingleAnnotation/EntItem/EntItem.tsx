@@ -3,18 +3,22 @@ import { CloseOutlined } from '@ant-design/icons';
 import type { labelType } from '../index';
 import { Dropdown, Menu } from 'antd';
 import { useState } from 'react';
+import { useModel } from '@@/plugin-model/useModel';
 
 interface EntItemProps {
   content: string;
   label: string | null;
   color: string;
   labels: labelType[];
-  updateEntity: (labelId: number, annotationId: number) => void;
+  // updateEntity: (labelId: number, annotationId: number) => void;
   item_id: number | undefined;
+  list_id: number;
 }
 
-export default ({ content, label, color, labels, updateEntity, item_id }: EntItemProps) => {
+export default ({ content, label, color, labels, item_id, list_id }: EntItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
+  // @ts-ignore
+  const { updateEntity } = useModel('nerDocs', (model) => ({ updateEntity: model.updateEntity }));
 
   const idealColor = function (hexString: string) {
     const r = parseInt(hexString.substr(1, 2), 16);
@@ -42,8 +46,8 @@ export default ({ content, label, color, labels, updateEntity, item_id }: EntIte
               <Menu.Item
                 key={item.id}
                 onClick={() => {
-                  if (item_id) {
-                    updateEntity(item.id, item_id);
+                  if (typeof item_id !== undefined) {
+                    updateEntity(item.id, item_id, list_id);
                   }
                   setShowMenu(false);
                 }}
@@ -61,7 +65,7 @@ export default ({ content, label, color, labels, updateEntity, item_id }: EntIte
           className="highlight__label"
           style={{ backgroundColor: color, color: idealColor(color) }}
           onClick={() => setShowMenu(!showMenu)}
-        ></span>
+        />
       </Dropdown>
     </span>
   );

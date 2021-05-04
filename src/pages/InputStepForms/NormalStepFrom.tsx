@@ -8,9 +8,12 @@ import {
 import ProCard from '@ant-design/pro-card';
 import { waitTime } from '@/utils/useful';
 import { knowledgeExtract } from '@/services/site-data/api';
+import type { annotationType, labelType } from '@/components/SingleAnnotation';
 import AnnotationCard from '@/components/SingleAnnotation/index';
+// import { useState } from 'react';
+// import type { MyAPI } from '@/services/site-data/typings';
+import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
-import type { MyAPI } from '@/services/site-data/typings';
 
 export default ({
   visible,
@@ -19,11 +22,17 @@ export default ({
   visible: boolean;
   setVisible: (props: boolean) => void;
 }) => {
-  const [docs, setDocs] = useState<MyAPI.rawKnowledgeMessageResults>({ labels: [], nerDocs: [] });
+  const [labels, setLabels] = useState<labelType[]>([]);
+  // @ts-ignore
+  const { nerDocs, setNerDocs } = useModel('nerDocs', (model) => ({
+    nerDocs: model.nerDocs,
+    setNerDocs: model.setNerDocs,
+  }));
 
   const stopOneFinish = async (formData: any) => {
     knowledgeExtract(formData).then((response) => {
-      setDocs(response);
+      setNerDocs(response.nerDocs);
+      setLabels(response.labels);
     });
     return true;
   };
@@ -118,19 +127,21 @@ export default ({
       <StepsForm.StepForm name="knowledgeResult" title="抽取结果" onFinish={stopTwoFinish}>
         <Card>
           <Space direction="vertical">
-            {docs.nerDocs.map((doc, list_id) => (
-              <Card
-                type="inner"
-                key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
-              >
-                <AnnotationCard
-                  labels={docs.labels}
-                  annotationsDefault={doc.annotations}
-                  text={doc.text}
-                  list_id={list_id}
-                />
-              </Card>
-            ))}
+            {nerDocs.map(
+              (doc: { annotations: annotationType[]; text: string }, list_id: number) => (
+                <Card
+                  type="inner"
+                  key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
+                >
+                  <AnnotationCard
+                    labels={labels}
+                    // annotationsDefault={doc.annotations}
+                    text={doc.text}
+                    list_id={list_id}
+                  />
+                </Card>
+              ),
+            )}
           </Space>
         </Card>
       </StepsForm.StepForm>
