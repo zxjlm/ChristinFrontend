@@ -1,4 +1,4 @@
-import { Card, message, Modal, Space, Switch } from 'antd';
+import { message, Modal, Switch } from 'antd';
 import {
   ProFormText,
   ProFormTextArea,
@@ -8,10 +8,11 @@ import {
 import ProCard from '@ant-design/pro-card';
 import { waitTime } from '@/utils/useful';
 import { knowledgeExtract, startBuildSandbox } from '@/services/site-data/api';
-import type { annotationType, labelType } from '@/components/SingleAnnotation';
-import AnnotationCard from '@/components/SingleAnnotation/index';
+import type { labelType } from '@/components/SingleAnnotation';
+import AnnotationCard from '@/components/AnnotationCard/index';
 import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
+import PollStopCard from '@/components/PollStopCard';
 
 export default ({
   visible,
@@ -21,13 +22,12 @@ export default ({
   setVisible: (props: boolean) => void;
 }) => {
   const [labels, setLabels] = useState<labelType[]>([]);
-  // const [startPoll, setStartPoll] = useState(false);
+  const [startPoll, setStartPoll] = useState(false);
   const [needEmail, setNeedEmail] = useState(true);
   const [projectInfo, setProjectInfo] = useState({
     projectName: 'undefined',
     projectDescription: '',
   });
-  // @ts-ignore
   const { nerDocs, setNerDocs } = useModel('nerDocs', (model) => ({
     nerDocs: model.nerDocs,
     setNerDocs: model.setNerDocs,
@@ -48,6 +48,7 @@ export default ({
   const stopTwoFinish = async () => {
     startBuildSandbox({ ...projectInfo, needEmail, data: nerDocs }).then((response) => {
       console.log(response);
+      setStartPoll(true);
     });
   };
 
@@ -135,25 +136,7 @@ export default ({
         </ProCard>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="knowledgeResult" title="抽取结果" onFinish={stopTwoFinish}>
-        <Card title={'复核标注结果'}>
-          <Space direction="vertical">
-            {nerDocs.map(
-              (doc: { annotations: annotationType[]; text: string }, list_id: number) => (
-                <Card
-                  type="inner"
-                  key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
-                >
-                  <AnnotationCard
-                    labels={labels}
-                    // annotationsDefault={doc.annotations}
-                    text={doc.text}
-                    list_id={list_id}
-                  />
-                </Card>
-              ),
-            )}
-          </Space>
-        </Card>
+        <AnnotationCard nerDocs={nerDocs} labels={labels} />
         <div style={{ marginLeft: '30px', marginTop: '10px' }}>
           <Switch
             checkedChildren={'使用邮件通知'}
@@ -163,8 +146,9 @@ export default ({
           />
         </div>
       </StepsForm.StepForm>
-      <StepsForm.StepForm name="buildGraph" title="构建图数据库"></StepsForm.StepForm>
-      <StepsForm.StepForm name="buildResult" title="图数据库构建结果"></StepsForm.StepForm>
+      <StepsForm.StepForm name="buildGraph" title="构建图数据库">
+        <PollStopCard startPolling={startPoll} />
+      </StepsForm.StepForm>
     </StepsForm>
   );
 };
