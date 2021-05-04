@@ -10,7 +10,7 @@ import { waitTime } from '@/utils/useful';
 import { knowledgeExtract } from '@/services/site-data/api';
 import AnnotationCard from '@/components/SingleAnnotation/index';
 import { useState } from 'react';
-import { MyAPI } from '@/services/site-data/typings';
+import type { MyAPI } from '@/services/site-data/typings';
 
 export default ({
   visible,
@@ -28,9 +28,14 @@ export default ({
     return true;
   };
 
+  const stopTwoFinish = async () => {
+    // console.log(docs)
+  };
+
   return (
     <StepsForm
       onFinish={async (values) => {
+        // eslint-disable-next-line no-console
         console.log(values);
         await waitTime(1000);
         setVisible(false);
@@ -110,10 +115,10 @@ export default ({
           </ProCard.TabPane>
         </ProCard>
       </StepsForm.StepForm>
-      <StepsForm.StepForm name="knowledgeResult" title="抽取结果">
+      <StepsForm.StepForm name="knowledgeResult" title="抽取结果" onFinish={stopTwoFinish}>
         <Card>
           <Space direction="vertical">
-            {docs.nerDocs.map((doc) => (
+            {docs.nerDocs.map((doc, list_id) => (
               <Card
                 type="inner"
                 key={Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))}
@@ -122,6 +127,7 @@ export default ({
                   labels={docs.labels}
                   annotationsDefault={doc.annotations}
                   text={doc.text}
+                  list_id={list_id}
                 />
               </Card>
             ))}

@@ -12,6 +12,7 @@ interface EntItemBoxProps {
   deleteAnnotation: (annotationId: number) => void;
   updateEntity: (labelId: number, annotationId: number) => void;
   addEntity: (start: number, end: number, labelId: number) => void;
+  list_id: number;
 }
 
 interface chunkState {
@@ -29,10 +30,13 @@ export default ({
   deleteAnnotation,
   updateEntity,
   addEntity,
+  list_id,
 }: EntItemBoxProps) => {
   const [renderChunks, setRenderChunks] = useState<chunkState[]>([]);
-  const [position, setPosition] = useState({ start: 0, end: 0, x: 0, y: 0, showMenu: false });
+  const [position, setPosition] = useState({ start: 0, end: 0, x: 0, y: 0 });
+  const [showMenu, setShowMenu] = useState(false);
 
+  // eslint-disable-next-line no-console
   console.log('update', entities);
 
   const sortedEntities: () => annotationType[] = () => {
@@ -128,13 +132,18 @@ export default ({
 
     return { start_tmp, end_tmp };
   };
-  const validateSpan = (start_: number | undefined = 0, end_: number | undefined = 0) => {
+  const validateSpan = (
+    start_: number | undefined = position.start,
+    end_: number | undefined = position.end,
+  ) => {
     if (typeof start_ === 'undefined' || typeof end_ === 'undefined' || end_ === 0) {
-      setPosition({ ...position, showMenu: false });
+      setPosition({ ...position });
+      setShowMenu(false);
       return false;
     }
     if (start_ === end_) {
-      setPosition({ ...position, showMenu: false });
+      setPosition({ ...position });
+      setShowMenu(false);
       return false;
     }
     // eslint-disable-next-line no-restricted-syntax
@@ -158,9 +167,10 @@ export default ({
       end: end_,
       x: e.clientX || e.changedTouches[0].clientX,
       y: e.clientY || e.changedTouches[0].clientY,
-      showMenu: true,
+      // showMenu: true,
     };
     setPosition(tmp);
+    setShowMenu(true);
   };
   const handleOpen = (e: any) => {
     const deleteElem = e.path.filter((elem: any) => elem.className === 'delete');
@@ -168,6 +178,7 @@ export default ({
       const inner_id = Number(deleteElem[0].name.replace('close', ''));
       deleteAnnotation(inner_id);
     } else if (e.target.className === 'highlight__label') {
+      // eslint-disable-next-line no-console
       console.log('open trigger', e);
     } else {
       const { start_tmp, end_tmp } = setSpanInfo(e);
@@ -182,9 +193,9 @@ export default ({
     const cls = document.getElementsByClassName(
       'highlight-container highlight-container--bottom-labels',
     );
-    cls[0].addEventListener('mouseup', handleOpen);
+    cls[list_id].addEventListener('mouseup', handleOpen);
     return () => {
-      if (cls[0]) cls[0].removeEventListener('mouseup', handleOpen);
+      if (cls[list_id]) cls[list_id].removeEventListener('mouseup', handleOpen);
     };
   }, [entities]);
 
@@ -224,7 +235,8 @@ export default ({
                 key={item.id}
                 onClick={() => {
                   addEntity(position.start, position.end, item.id);
-                  setPosition({ ...position, showMenu: false });
+                  setPosition({ ...position });
+                  setShowMenu(false);
                 }}
               >
                 {item.text}
@@ -233,7 +245,7 @@ export default ({
           </Menu>
         }
         placement="bottomLeft"
-        visible={position.showMenu}
+        visible={showMenu}
       >
         <div />
       </Dropdown>
