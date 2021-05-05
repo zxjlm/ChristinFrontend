@@ -29,3 +29,8 @@ export const startBuildSandbox = async (body: MyAPI.startBuildSandbox) =>
     },
     data: body,
   });
+
+export const buildingPolling = async (task_id: string) =>
+  request<MyAPI.buildingPollingResult>(`/main/api/v2/status/${task_id}`, {
+    method: 'GET',
+  });

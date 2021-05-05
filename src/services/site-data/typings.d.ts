@@ -63,4 +63,12 @@ declare namespace MyAPI {
     msg: string;
     task_id: string;
   };
+
+  type buildingPollingResult = {
+    state: string;
+    info: { current: number; total: number; status: string; config: Record<string, string> };
+    status?: string;
+    msg?: string;
+    result?: string;
+  };
 }

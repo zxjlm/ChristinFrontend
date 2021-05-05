@@ -22,7 +22,7 @@ export default ({
   setVisible: (props: boolean) => void;
 }) => {
   const [labels, setLabels] = useState<labelType[]>([]);
-  const [startPoll, setStartPoll] = useState(false);
+  const [taskId, setTaskId] = useState<string | undefined>(undefined);
   const [needEmail, setNeedEmail] = useState(true);
   const [projectInfo, setProjectInfo] = useState({
     projectName: 'undefined',
@@ -47,9 +47,11 @@ export default ({
 
   const stopTwoFinish = async () => {
     startBuildSandbox({ ...projectInfo, needEmail, data: nerDocs }).then((response) => {
-      console.log(response);
-      setStartPoll(true);
+      if (response.code === 200) {
+        setTaskId(response.task_id);
+      }
     });
+    return true;
   };
 
   return (
@@ -96,6 +98,7 @@ export default ({
             label="项目描述"
             width="lg"
             placeholder="请输入项目描述(250字以内)"
+            initialValue={'无'}
           />
         </div>
         <ProCard
@@ -147,7 +150,7 @@ export default ({
         </div>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="buildGraph" title="构建图数据库">
-        <PollStopCard startPolling={startPoll} />
+        <PollStopCard taskId={taskId} />
       </StepsForm.StepForm>
     </StepsForm>
   );

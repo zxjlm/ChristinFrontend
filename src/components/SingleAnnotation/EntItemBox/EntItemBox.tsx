@@ -168,6 +168,7 @@ export default ({ labels, text, list_id }: EntItemBoxProps) => {
     setShowMenu(true);
   };
   const handleOpen = (e: any) => {
+    e.preventDefault();
     const deleteElem = e.path.filter((elem: any) => elem.className === 'delete');
     if (deleteElem.length !== 0) {
       const inner_id = Number(deleteElem[0].name.replace('close', ''));
