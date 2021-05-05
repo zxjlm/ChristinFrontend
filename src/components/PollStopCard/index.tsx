@@ -1,4 +1,4 @@
-import { Steps } from 'antd';
+import { Descriptions, Steps } from 'antd';
 import { useRequest } from '@@/plugin-request/request';
 import { buildingPolling } from '@/services/site-data/api';
 import { useEffect, useState } from 'react';
@@ -16,7 +16,13 @@ interface currentState {
   status?: string;
 }
 
-export default ({ taskId }: { taskId: string | undefined }) => {
+export default ({
+  taskId,
+  startPolling,
+}: {
+  taskId: string | undefined;
+  startPolling: boolean;
+}) => {
   const [currentState, setCurrentState] = useState<currentState>({
     info: { current: 0, total: 0 },
     state: '',
@@ -28,7 +34,7 @@ export default ({ taskId }: { taskId: string | undefined }) => {
     'wait',
     'wait',
   ]);
-  const [description, setDescription] = useState({});
+  const [description, setDescription] = useState<Record<string, string>>({});
 
   const { data, run, cancel } = useRequest(buildingPolling, {
     pollingInterval: 1000,
@@ -43,7 +49,7 @@ export default ({ taskId }: { taskId: string | undefined }) => {
     } else {
       cancel();
     }
-  }, [taskId]);
+  }, [taskId, startPolling]);
 
   useEffect(() => {
     if (data) {
@@ -62,6 +68,7 @@ export default ({ taskId }: { taskId: string | undefined }) => {
       } else if (data.state === 'SUCCESS') {
         status[3] = 'finish';
         cancel();
+        delete data.info.config.container_id;
         setDescription(data.info.config || {});
       }
       setCurrentState(tmp);
@@ -70,28 +77,37 @@ export default ({ taskId }: { taskId: string | undefined }) => {
   }, [data]);
 
   return (
-    <Steps direction="vertical" size="small" current={currentState.info.current}>
-      <Step
-        title="CREATE NEO4J SANDBOX"
-        description="创建图数据库."
-        status={stepStatus[0]}
-        disabled={true}
-      />
-      <Step
-        title="INITIALIZE NEO4J"
-        description="对图数据库进行初始化."
-        status={stepStatus[1]}
-        disabled={true}
-      />
-      <Step title="FILL DATA" description="填充数据." status={stepStatus[2]} disabled={true} />
-      <Step title="FINISH" description="图数据库生成完毕." status={stepStatus[3]} disabled={true} />
-      <ProCard title="结果" extra="extra" tooltip="这是提示" style={{ maxWidth: 300 }}>
-        {Object.entries(description).map((elem) => (
-          <div key={elem[0]}>
-            {elem[0]}:{elem[1]}
-          </div>
-        ))}
+    <div>
+      <Steps direction="vertical" size="small" current={currentState.info.current}>
+        <Step
+          title="CREATE NEO4J SANDBOX"
+          description="创建图数据库."
+          status={stepStatus[0]}
+          disabled={true}
+        />
+        <Step
+          title="INITIALIZE NEO4J"
+          description="对图数据库进行初始化."
+          status={stepStatus[1]}
+          disabled={true}
+        />
+        <Step title="FILL DATA" description="填充数据." status={stepStatus[2]} disabled={true} />
+        <Step
+          title="FINISH"
+          description="图数据库生成完毕."
+          status={stepStatus[3]}
+          disabled={true}
+        />
+      </Steps>
+      <ProCard title="结果" tooltip="这是图数据库的配置信息">
+        <Descriptions bordered>
+          {Object.entries(description).map((elem) => (
+            <Descriptions.Item label={elem[0]} key={elem[0]}>
+              {elem[1]}
+            </Descriptions.Item>
+          ))}
+        </Descriptions>
       </ProCard>
-    </Steps>
+    </div>
   );
 };

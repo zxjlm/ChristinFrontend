@@ -1,4 +1,4 @@
-import { message, Modal, Switch } from 'antd';
+import { message, Modal, notification, Switch } from 'antd';
 import {
   ProFormText,
   ProFormTextArea,
@@ -14,6 +14,15 @@ import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
 import PollStopCard from '@/components/PollStopCard';
 
+const openNotification = (msg: string) => {
+  const args = {
+    message: 'Warning',
+    description: msg,
+    duration: 0,
+  };
+  notification.open(args);
+};
+
 export default ({
   visible,
   setVisible,
@@ -28,6 +37,9 @@ export default ({
     projectName: 'undefined',
     projectDescription: '',
   });
+  const [formHash, setFormHash] = useState('');
+  const [startPolling, setStartPolling] = useState(false);
+
   const { nerDocs, setNerDocs } = useModel('nerDocs', (model) => ({
     nerDocs: model.nerDocs,
     setNerDocs: model.setNerDocs,
@@ -46,11 +58,18 @@ export default ({
   };
 
   const stopTwoFinish = async () => {
-    startBuildSandbox({ ...projectInfo, needEmail, data: nerDocs }).then((response) => {
-      if (response.code === 200) {
-        setTaskId(response.task_id);
-      }
-    });
+    const postData = { ...projectInfo, needEmail, data: nerDocs };
+    if (formHash !== JSON.stringify(postData)) {
+      startBuildSandbox(postData).then((response) => {
+        if (response.code === 200) {
+          setTaskId(response.task_id);
+        }
+      });
+      setFormHash(JSON.stringify(postData));
+    } else {
+      openNotification('表单未曾发生改变, 默认不进行提交');
+      setStartPolling(!startPolling);
+    }
     return true;
   };
 
@@ -150,7 +169,7 @@ export default ({
         </div>
       </StepsForm.StepForm>
       <StepsForm.StepForm name="buildGraph" title="构建图数据库">
-        <PollStopCard taskId={taskId} />
+        <PollStopCard taskId={taskId} startPolling={startPolling} />
       </StepsForm.StepForm>
     </StepsForm>
   );
