@@ -1,6 +1,6 @@
 import type { annotationType, labelType } from '@/components/SingleAnnotation';
 
-declare namespace MyAPI {
+declare namespace BasicAPI {
   type basicData = {
     user_c: number;
     herb_c: number;

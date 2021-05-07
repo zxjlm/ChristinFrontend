@@ -1,9 +1,9 @@
 import { Card, Space, Spin } from 'antd';
 import type { annotationType, labelType } from '@/components/SingleAnnotation';
 import SingleAnnotation from '@/components/SingleAnnotation';
-import type { MyAPI } from '@/services/site-data/typings';
+import type { BasicAPI } from '@/services/site-data/typings';
 
-export default ({ nerDocs, labels }: { nerDocs: MyAPI.nerDoc[]; labels: labelType[] }) => {
+export default ({ nerDocs, labels }: { nerDocs: BasicAPI.nerDoc[]; labels: labelType[] }) => {
   if (nerDocs.length === 0) return <Spin size={'large'} />;
   return (
     <Card title={'复核标注结果'}>
