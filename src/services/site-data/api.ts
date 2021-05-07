@@ -1,5 +1,5 @@
-import { request } from 'umi';
 import type { BasicAPI } from '@/services/site-data/typings';
+import request from 'umi-request';
 
 export const websiteBasicData = async (options?: Record<string, any>) =>
   request<BasicAPI.basicData>('/main/api/v2/get_website_info', {

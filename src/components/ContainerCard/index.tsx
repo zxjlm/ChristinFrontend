@@ -1,22 +1,24 @@
 import ProList from '@ant-design/pro-list';
 
-interface runtimeDataProp {
+export interface runtimeDataProp {
   title: string;
-  subTitle: string;
+  subTitle: string | JSX.Element;
   type: string;
   avatar: string;
-  content: string;
-  actions: [];
+  content: string | JSX.Element;
+  actions: any[] | JSX.Element;
 }
 
 export default ({ runtimeData }: { runtimeData: runtimeDataProp[] }) => {
   return (
     <ProList<any>
       pagination={{
-        defaultPageSize: 8,
+        defaultPageSize: 9,
         showSizeChanger: false,
       }}
-      grid={{ gutter: 16, column: 2 }}
+      grid={{ gutter: 16, column: 3 }}
+      showActions={'hover'}
+      showExtra={'hover'}
       metas={{
         title: {},
         subTitle: {},
@@ -25,7 +27,7 @@ export default ({ runtimeData }: { runtimeData: runtimeDataProp[] }) => {
         content: {},
         actions: {},
       }}
-      headerTitle="翻页"
+      headerTitle="项目管理"
       dataSource={runtimeData}
     />
   );

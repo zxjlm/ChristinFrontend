@@ -28,9 +28,10 @@ interface singleAnnotationProp {
   text: string;
   // annotationsDefault: annotationType[];
   list_id: number;
+  readOnly?: boolean;
 }
 
-export default ({ labels, text, list_id }: singleAnnotationProp) => {
+export default ({ labels, text, list_id, readOnly = false }: singleAnnotationProp) => {
   // const [annotations, setAnnotations] = useState<annotationType[]>(annotationsDefault);
   //
   // const removeEntity = (annotationId: number) => {
@@ -63,6 +64,7 @@ export default ({ labels, text, list_id }: singleAnnotationProp) => {
       // updateEntity={updateEntity}
       // addEntity={addEntity}
       list_id={list_id}
+      readOnly={readOnly}
     />
   );
 };
