@@ -10,6 +10,7 @@ interface EntItemBoxProps {
   labels: labelType[];
   text: string;
   list_id: number;
+  readOnly?: boolean;
 }
 
 interface chunkState {
@@ -20,18 +21,17 @@ interface chunkState {
   newline?: boolean;
 }
 
-export default ({ labels, text, list_id }: EntItemBoxProps) => {
+export default ({ labels, text, list_id, readOnly = false }: EntItemBoxProps) => {
   const [renderChunks, setRenderChunks] = useState<chunkState[]>([]);
   const [position, setPosition] = useState({ start: 0, end: 0, x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
-  // @ts-ignore
+
   const { nerDocs, addEntity, deleteAnnotation } = useModel('nerDocs', (model) => ({
     nerDocs: model.nerDocs,
     addEntity: model.addEntity,
     deleteAnnotation: model.deleteEntity,
   }));
 
-  // eslint-disable-next-line no-console
   console.log('update', nerDocs[list_id].annotations);
 
   const sortedEntities: () => annotationType[] = () => {
@@ -189,22 +189,36 @@ export default ({ labels, text, list_id }: EntItemBoxProps) => {
     const cls = document.getElementsByClassName(
       'highlight-container highlight-container--bottom-labels',
     );
-    cls[list_id].addEventListener('mouseup', handleOpen);
+    if (!readOnly) {
+      cls[list_id].addEventListener('mouseup', handleOpen);
+    }
     return () => {
       if (cls[list_id]) cls[list_id].removeEventListener('mouseup', handleOpen);
     };
   }, [nerDocs]);
 
-  // const assignLabel = (labelId: number) => {
-  //     if (validateSpan()) {
-  //         addEntity(start, end, labelId)
-  //         setShowMenu(false)
-  //         // setStart(0)
-  //         // setEnd(0)
-  //         x = 0
-  //         y = 0
-  //     }
-  // }
+  if (readOnly) {
+    return (
+      <div className={'highlight-container highlight-container--bottom-labels'}>
+        {renderChunks.map((chunk) => {
+          if (chunk.color)
+            return (
+              <EntItem
+                key={chunk.id}
+                labels={labels}
+                label={chunk.label}
+                color={chunk.color}
+                content={chunk.text}
+                item_id={chunk.id}
+                list_id={list_id}
+                readOnly={readOnly}
+              />
+            );
+          return chunk.text;
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className={'highlight-container highlight-container--bottom-labels'}>
@@ -217,9 +231,9 @@ export default ({ labels, text, list_id }: EntItemBoxProps) => {
               label={chunk.label}
               color={chunk.color}
               content={chunk.text}
-              // updateEntity={updateEntity}
               item_id={chunk.id}
               list_id={list_id}
+              readOnly={readOnly}
             />
           );
         return chunk.text;

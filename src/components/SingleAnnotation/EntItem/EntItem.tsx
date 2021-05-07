@@ -13,9 +13,10 @@ interface EntItemProps {
   // updateEntity: (labelId: number, annotationId: number) => void;
   item_id: number | undefined;
   list_id: number;
+  readOnly: boolean;
 }
 
-export default ({ content, label, color, labels, item_id, list_id }: EntItemProps) => {
+export default ({ content, label, color, labels, item_id, list_id, readOnly }: EntItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
   // @ts-ignore
   const { updateEntity } = useModel('nerDocs', (model) => ({ updateEntity: model.updateEntity }));
@@ -30,6 +31,20 @@ export default ({ content, label, color, labels, item_id, list_id }: EntItemProp
   const onClick = () => {
     // if (item_id) deleteAnnotation(item_id)
   };
+
+  if (readOnly) {
+    return (
+      <span className="highlight bottom" style={{ borderColor: color }}>
+        <span className="highlight__content">{content}</span>
+        <span
+          data-label={label}
+          className="highlight__label"
+          style={{ backgroundColor: color, color: idealColor(color) }}
+          onClick={() => setShowMenu(!showMenu)}
+        />
+      </span>
+    );
+  }
 
   return (
     <span className="highlight bottom" style={{ borderColor: color }}>
@@ -46,7 +61,7 @@ export default ({ content, label, color, labels, item_id, list_id }: EntItemProp
               <Menu.Item
                 key={item.id}
                 onClick={() => {
-                  if (typeof item_id !== undefined) {
+                  if (typeof item_id !== undefined && item_id !== undefined) {
                     updateEntity(item.id, item_id, list_id);
                   }
                   setShowMenu(false);
