@@ -66,13 +66,18 @@ export default () => {
 
   useEffect(() => {
     if (transferData.login_name !== '') {
+      console.log('trigger1', transferData);
       setNerDocs(transferData.data);
     }
     return () => {};
-  }, [transferData]);
+  }, [setNerDocs, transferData]);
 
   useEffect(() => {
-    setDetailModalVisible(true);
+    console.log('trigger2.1');
+    if (transferData.login_name !== '') {
+      console.log('trigger2');
+      setDetailModalVisible(true);
+    }
     return () => {};
   }, [nerDocs]);
 

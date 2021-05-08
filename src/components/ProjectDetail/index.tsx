@@ -39,6 +39,8 @@ export default ({ projectData }: { projectData: ProjectApi.projectDetailResult }
         <ProDescriptions.Item label="项目处理进度" valueType="progress">
           100
         </ProDescriptions.Item>
+        <ProDescriptions.Item label="密码">{projectData.remark.password}</ProDescriptions.Item>
+        <ProDescriptions.Item label="端口">{projectData.remark.port}</ProDescriptions.Item>
         <ProDescriptions.Item label="分析数据">
           <Space direction="vertical">
             {projectData.data.map(
