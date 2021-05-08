@@ -28,6 +28,12 @@
     component: './ProjectManagement',
   },
   {
+    path: '/create-project',
+    name: 'create-project',
+    icon: 'smile',
+    component: './CreateProject/index',
+  },
+  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',

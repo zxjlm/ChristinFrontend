@@ -1,9 +1,7 @@
-import styles from './index.less';
-import { Menu, Dropdown } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { BarsOutlined, FileTextOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import NormalStepFrom from '@/pages/InputStepForms/NormalStepFrom';
-import ContainerCardList from '@/components/ContainerCardList/index';
 
 export default () => {
   const [visible, setVisible] = useState(false);
@@ -13,7 +11,7 @@ export default () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div id="components-dropdown-demo-dropdown-button">
         <div id="components-dropdown-demo-dropdown-button">
           <Dropdown.Button
@@ -38,8 +36,6 @@ export default () => {
           </Dropdown.Button>
         </div>
       </div>
-      <ContainerCardList />
-
       <NormalStepFrom visible={visible} setVisible={setVisible} />
     </div>
   );

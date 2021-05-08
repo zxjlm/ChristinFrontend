@@ -27,7 +27,6 @@ export default ({ runtimeData }: { runtimeData: runtimeDataProp[] }) => {
         content: {},
         actions: {},
       }}
-      headerTitle="项目管理"
       dataSource={runtimeData}
     />
   );
