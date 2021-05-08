@@ -108,7 +108,9 @@ export default () => {
 
   useEffect(() => {
     projectsRuntime().then((result) => setProjectsRuntimeInfo(result));
-    return () => {};
+    return () => {
+      setNerDocs(initProjectData.data);
+    };
   }, []);
 
   useEffect(() => {

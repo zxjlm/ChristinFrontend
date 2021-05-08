@@ -1,4 +1,4 @@
-import { message, Modal, notification, Switch } from 'antd';
+import { message, notification, Switch } from 'antd';
 import {
   ProFormText,
   ProFormTextArea,
@@ -23,13 +23,7 @@ const openNotification = (msg: string) => {
   notification.open(args);
 };
 
-export default ({
-  visible,
-  setVisible,
-}: {
-  visible: boolean;
-  setVisible: (props: boolean) => void;
-}) => {
+export default () => {
   const [labels, setLabels] = useState<labelType[]>([]);
   const [taskId, setTaskId] = useState<string | undefined>(undefined);
   const [needEmail, setNeedEmail] = useState(true);
@@ -79,27 +73,12 @@ export default ({
         // eslint-disable-next-line no-console
         console.log(values);
         await waitTime(1000);
-        setVisible(false);
         message.success('提交成功');
       }}
       formProps={{
         validateMessages: {
           required: '此项为必填项',
         },
-      }}
-      stepsFormRender={(dom, submitter) => {
-        return (
-          <Modal
-            title="分步表单"
-            width={1000}
-            onCancel={() => setVisible(false)}
-            visible={visible}
-            footer={submitter}
-            destroyOnClose
-          >
-            {dom}
-          </Modal>
-        );
       }}
     >
       <StepsForm.StepForm name="dataInput" title="数据录入" onFinish={stopOneFinish}>
@@ -159,7 +138,7 @@ export default ({
       </StepsForm.StepForm>
       <StepsForm.StepForm name="knowledgeResult" title="抽取结果" onFinish={stopTwoFinish}>
         <AnnotationCard nerDocs={nerDocs} labels={labels} />
-        <div style={{ marginLeft: '30px', marginTop: '10px' }}>
+        <div style={{ marginLeft: '30px', marginTop: '10px', marginBottom: '20px' }}>
           <Switch
             checkedChildren={'使用邮件通知'}
             unCheckedChildren={'不需要邮件'}
