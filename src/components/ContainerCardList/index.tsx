@@ -6,6 +6,12 @@ import ContainerCard from '@/components/ContainerCard/index';
 import ProjectDetail from '@/components/ProjectDetail/index';
 import styles from './index.less';
 import { useModel } from '@@/plugin-model/useModel';
+import img1 from '@/images/1.png';
+import img2 from '@/images/2.png';
+import img3 from '@/images/3.png';
+import img4 from '@/images/4.png';
+
+const cats = [img1, img2, img3, img4];
 
 export default () => {
   const initProjectData: ProjectApi.projectDetailResult = {
@@ -86,7 +92,7 @@ export default () => {
             title: item.s_project_name,
             subTitle: <Tag color="#5BD8A6">{item.login_name}</Tag>,
             type: item.status,
-            avatar: 'https://gw.alipayobjects.com/zos/antfincdn/UCSiy1j6jx/xingzhuang.svg',
+            avatar: cats[Math.floor(Math.random() * cats.length)],
             content: (
               <div
                 style={{
