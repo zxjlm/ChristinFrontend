@@ -47,8 +47,6 @@ export default ({ labels, text, list_id, readOnly = false }: EntItemBoxProps) =>
     deleteAnnotation: model.deleteEntity,
   }));
 
-  console.log('update', nerDocs[list_id].annotations);
-
   const sortedEntities: () => annotationType[] = () => {
     return nerDocs[list_id].annotations
       .slice()
@@ -200,12 +198,14 @@ export default ({ labels, text, list_id, readOnly = false }: EntItemBoxProps) =>
   };
 
   useEffect(() => {
-    setRenderChunks(chunks());
     const cls = document.getElementsByClassName(
       'highlight-container highlight-container--bottom-labels',
     );
-    if (!readOnly) {
-      cls[list_id].addEventListener('mouseup', handleOpen);
+    if (nerDocs.length > 0) {
+      setRenderChunks(chunks());
+      if (!readOnly) {
+        cls[list_id].addEventListener('mouseup', handleOpen);
+      }
     }
     return () => {
       if (cls[list_id]) cls[list_id].removeEventListener('mouseup', handleOpen);

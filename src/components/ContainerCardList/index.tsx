@@ -66,16 +66,13 @@ export default () => {
 
   useEffect(() => {
     if (transferData.login_name !== '') {
-      console.log('trigger1', transferData);
       setNerDocs(transferData.data);
     }
     return () => {};
   }, [setNerDocs, transferData]);
 
   useEffect(() => {
-    console.log('trigger2.1');
     if (transferData.login_name !== '') {
-      console.log('trigger2');
       setDetailModalVisible(true);
     }
     return () => {};
@@ -128,6 +125,7 @@ export default () => {
         onCancel={() => {
           setDetailModalVisible(false);
           setTransferData(initProjectData);
+          setNerDocs(initProjectData.data);
         }}
         width={'50%'}
       >
