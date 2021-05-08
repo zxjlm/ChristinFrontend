@@ -201,7 +201,7 @@ export default ({ labels, text, list_id, readOnly = false }: EntItemBoxProps) =>
     const cls = document.getElementsByClassName(
       'highlight-container highlight-container--bottom-labels',
     );
-    if (nerDocs.length > 0) {
+    if (typeof nerDocs[list_id] !== 'undefined') {
       setRenderChunks(chunks());
       if (!readOnly) {
         cls[list_id].addEventListener('mouseup', handleOpen);

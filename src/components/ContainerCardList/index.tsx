@@ -1,5 +1,11 @@
-import { Button, Col, Divider, Dropdown, Menu, Modal, Progress, Row, Tag } from 'antd';
-import { get_project_detail, projectsRuntime } from '@/services/projects-operator/api';
+import { Button, Col, Divider, Dropdown, Menu, message, Modal, Progress, Row, Tag } from 'antd';
+import {
+  get_project_detail,
+  project_deleted,
+  project_exited,
+  project_start,
+  projectsRuntime,
+} from '@/services/projects-operator/api';
 import { useEffect, useState } from 'react';
 import type { runtimeDataProp } from '@/components/ContainerCard';
 import ContainerCard from '@/components/ContainerCard/index';
@@ -41,28 +47,85 @@ export default () => {
     nerDocs: model.nerDocs,
   }));
 
-  const menu = (cardId: string) => {
+  const menu = (cardId: string, status: string) => {
     const view = () => {
       get_project_detail(cardId).then((data) => setTransferData(data));
     };
 
-    return (
-      <Menu>
-        <Menu.Item>
-          <a onClick={view}>查看</a>
-        </Menu.Item>
-        <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-            休眠
-          </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-            删除
-          </a>
-        </Menu.Item>
-      </Menu>
+    const deleted = () => {
+      message
+        .loading('操作中..', 1)
+        .then(() => project_deleted(cardId))
+        .then((response) => message.success(response.msg, 1.5))
+        .then(() => {
+          projectsRuntime().then((result) => setProjectsRuntimeInfo(result));
+        });
+    };
+
+    const exited = () => {
+      message
+        .loading('操作中..', 1)
+        .then(() => project_exited(cardId))
+        .then((response) => message.success(response.msg, 1.5))
+        .then(() => {
+          projectsRuntime().then((result) => setProjectsRuntimeInfo(result));
+        });
+    };
+
+    const start = () => {
+      message
+        .loading('操作中..', 1)
+        .then(() => project_start(cardId))
+        .then((response) => message.success(response.msg, 1.5))
+        .then(() => {
+          projectsRuntime().then((result) => setProjectsRuntimeInfo(result));
+        });
+    };
+
+    const view_node = (
+      <Menu.Item>
+        <a onClick={view}>查看</a>
+      </Menu.Item>
     );
+    const start_node = (
+      <Menu.Item>
+        <a onClick={start}>启动</a>
+      </Menu.Item>
+    );
+    const exit_node = (
+      <Menu.Item>
+        <a onClick={exited}>休眠</a>
+      </Menu.Item>
+    );
+    const delete_node = (
+      <Menu.Item>
+        <a onClick={deleted}>删除</a>
+      </Menu.Item>
+    );
+
+    switch (status) {
+      case 'creating':
+        return <Menu>{view_node}</Menu>;
+      case 'running':
+        return (
+          <Menu>
+            {view_node}
+            {exit_node}
+          </Menu>
+        );
+      case 'exited':
+        return (
+          <Menu>
+            {view_node}
+            {start_node}
+            {delete_node}
+          </Menu>
+        );
+      case 'deleted':
+        return <Menu>{view_node}</Menu>;
+      default:
+        return <Menu>{view_node}</Menu>;
+    }
   };
 
   const parserData = (item: ProjectApi.singleRuntime): runtimeDataProp => ({
@@ -100,7 +163,7 @@ export default () => {
       </div>
     ),
     actions: (
-      <Dropdown overlay={menu(item.mark)} placement="bottomLeft" arrow>
+      <Dropdown overlay={menu(item.mark, item.status)} placement="bottomLeft" arrow>
         <Button>管理</Button>
       </Dropdown>
     ),
@@ -118,7 +181,7 @@ export default () => {
       setNerDocs(transferData.data);
     }
     return () => {};
-  }, [setNerDocs, transferData]);
+  }, [transferData]);
 
   useEffect(() => {
     if (transferData.login_name !== '') {

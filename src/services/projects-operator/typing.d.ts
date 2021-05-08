@@ -31,4 +31,8 @@ declare namespace ProjectApi {
       password: string;
     };
   };
+  type normalOperatorResult = {
+    msg: string;
+    code?: number;
+  };
 }

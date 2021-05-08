@@ -69,9 +69,7 @@ export default () => {
 
   return (
     <StepsForm
-      onFinish={async (values) => {
-        // eslint-disable-next-line no-console
-        console.log(values);
+      onFinish={async () => {
         await waitTime(1000);
         message.success('提交成功');
       }}

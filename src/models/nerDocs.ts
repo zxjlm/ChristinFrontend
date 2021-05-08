@@ -2,13 +2,6 @@ import { useCallback, useState } from 'react';
 import type { annotationType } from '@/components/SingleAnnotation';
 import type { BasicAPI } from '@/services/site-data/typings';
 
-// interface nerDocsModel {
-//   nerDocs: MyAPI.rawKnowledgeMessageResults
-//   setNerDocs: (props: any) => void
-//   addEntity: () => void
-//   deleteEntity: () => void
-// }
-
 export default () => {
   const [nerDocs, setNerDocs] = useState<BasicAPI.nerDoc[]>([]);
   const removeEntityHandler = (annotationId: number, list_id: number) => {
@@ -34,7 +27,6 @@ export default () => {
     const tmpDocs = [...nerDocs];
     nerDocs[list_id].annotations.push(payload);
     setNerDocs(tmpDocs);
-    // currentDoc.annotations.push(payload as annotationType)
   };
 
   const addEntity = useCallback(addEntityHandler, [nerDocs]);
