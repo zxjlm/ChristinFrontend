@@ -25,7 +25,7 @@
     path: '/project-management',
     name: 'project-management',
     icon: 'smile',
-    component: './ProjectManagement',
+    component: './ProjectsManagement/index',
   },
   {
     path: '/create-project',

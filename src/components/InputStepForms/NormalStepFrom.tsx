@@ -9,7 +9,7 @@ import ProCard from '@ant-design/pro-card';
 import { waitTime } from '@/utils/useful';
 import { knowledgeExtract, startBuildSandbox } from '@/services/site-data/api';
 import type { labelType } from '@/components/SingleAnnotation';
-import AnnotationCard from '@/components/AnnotationCard/index';
+import AnnotationCard from '@/components/AnnotationCard';
 import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
 import PollStopCard from '@/components/PollStopCard';

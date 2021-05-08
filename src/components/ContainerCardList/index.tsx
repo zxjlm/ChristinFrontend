@@ -1,4 +1,4 @@
-import { Button, Col, Dropdown, Menu, Modal, Progress, Row, Tag } from 'antd';
+import { Button, Col, Divider, Dropdown, Menu, Modal, Progress, Row, Tag } from 'antd';
 import { get_project_detail, projectsRuntime } from '@/services/projects-operator/api';
 import { useEffect, useState } from 'react';
 import type { runtimeDataProp } from '@/components/ContainerCard';
@@ -65,6 +65,47 @@ export default () => {
     );
   };
 
+  const parserData = (item: ProjectApi.singleRuntime): runtimeDataProp => ({
+    title: item.s_project_name,
+    subTitle: <Tag color="#5BD8A6">{item.login_name}</Tag>,
+    type: item.status,
+    avatar: cats[Math.floor(Math.random() * cats.length)],
+    status: item.status,
+    content: (
+      <div
+        style={{
+          flex: 1,
+        }}
+      >
+        <Row>
+          <Col span={6}>项目状态:</Col>
+          <Col span={10}>{item.status}</Col>
+        </Row>
+        <Row>
+          <Col span={6}>子任务进度:</Col>
+          <Col span={10}>
+            <Progress percent={100} />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>创建日期:</Col>
+          <Col className={styles[item.badge_color]}>
+            {new Date(Date.parse(item.create_date_time)).toLocaleString()}
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>项目描述:</Col>
+          <Col span={10}>{item.s_project_description || '无项目说明'}</Col>
+        </Row>
+      </div>
+    ),
+    actions: (
+      <Dropdown overlay={menu(item.mark)} placement="bottomLeft" arrow>
+        <Button>管理</Button>
+      </Dropdown>
+    ),
+  });
+
   useEffect(() => {
     projectsRuntime().then((result) => setProjectsRuntimeInfo(result));
     return () => {};
@@ -87,44 +128,25 @@ export default () => {
   return (
     <div>
       <ContainerCard
-        runtimeData={projectsRuntimeInfo.deleted.map(
-          (item): runtimeDataProp => ({
-            title: item.s_project_name,
-            subTitle: <Tag color="#5BD8A6">{item.login_name}</Tag>,
-            type: item.status,
-            avatar: cats[Math.floor(Math.random() * cats.length)],
-            content: (
-              <div
-                style={{
-                  flex: 1,
-                }}
-              >
-                <Row>
-                  <Col span={6}>子任务进度:</Col>
-                  <Col span={10}>
-                    <Progress percent={100} />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={6}>创建日期:</Col>
-                  <Col className={styles[item.badge_color]}>
-                    {new Date(Date.parse(item.create_date_time)).toLocaleString()}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={6}>项目描述:</Col>
-                  <Col span={10}>{item.s_project_description || '无项目说明'}</Col>
-                </Row>
-              </div>
-            ),
-            actions: (
-              <Dropdown overlay={menu(item.mark)} placement="bottomLeft" arrow>
-                <Button>管理</Button>
-              </Dropdown>
-            ),
-          }),
-        )}
+        runtimeData={projectsRuntimeInfo.creating.map(parserData)}
+        headerTitle={'创建中'}
       />
+      <Divider />
+      <ContainerCard
+        runtimeData={projectsRuntimeInfo.running.map(parserData)}
+        headerTitle={'运行中'}
+      />
+      <Divider />
+      <ContainerCard
+        runtimeData={projectsRuntimeInfo.exited.map(parserData)}
+        headerTitle={'休眠中'}
+      />
+      <Divider />
+      <ContainerCard
+        runtimeData={projectsRuntimeInfo.deleted.map(parserData)}
+        headerTitle={'已删除'}
+      />
+
       <Modal
         title="项目详情"
         visible={detailModalVisible}

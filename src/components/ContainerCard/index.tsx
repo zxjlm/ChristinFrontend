@@ -7,25 +7,44 @@ export interface runtimeDataProp {
   avatar: string;
   content: string | JSX.Element;
   actions: any[] | JSX.Element;
+  status: string;
 }
 
-export default ({ runtimeData }: { runtimeData: runtimeDataProp[] }) => {
+export default ({
+  runtimeData,
+  headerTitle,
+}: {
+  runtimeData: runtimeDataProp[];
+  headerTitle: string;
+}) => {
   return (
     <ProList<any>
+      headerTitle={headerTitle}
       pagination={{
-        defaultPageSize: 9,
+        defaultPageSize: 6,
         showSizeChanger: false,
       }}
       grid={{ gutter: 16, column: 3 }}
-      showActions={'hover'}
-      showExtra={'hover'}
+      showActions="hover"
       metas={{
-        title: {},
-        subTitle: {},
-        type: {},
-        avatar: {},
-        content: {},
-        actions: {},
+        title: {
+          search: false,
+        },
+        subTitle: {
+          search: false,
+        },
+        type: {
+          search: false,
+        },
+        avatar: {
+          search: false,
+        },
+        content: {
+          search: false,
+        },
+        actions: {
+          search: false,
+        },
       }}
       dataSource={runtimeData}
     />

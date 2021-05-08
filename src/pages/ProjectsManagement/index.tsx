@@ -1,10 +1,13 @@
 import styles from './index.less';
 import ContainerCardList from '@/components/ContainerCardList/index';
+import { PageContainer } from '@ant-design/pro-layout';
 
 export default () => {
   return (
-    <div className={styles.container}>
-      <ContainerCardList />
-    </div>
+    <PageContainer>
+      <div className={styles.container}>
+        <ContainerCardList />
+      </div>
+    </PageContainer>
   );
 };

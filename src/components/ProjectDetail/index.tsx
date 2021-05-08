@@ -32,6 +32,10 @@ export default ({ projectData }: { projectData: ProjectApi.projectDetailResult }
               text: '已退出',
               status: 'Processing',
             },
+            creating: {
+              text: '创建中',
+              status: 'Processing',
+            },
           }}
         >
           {projectData.status}

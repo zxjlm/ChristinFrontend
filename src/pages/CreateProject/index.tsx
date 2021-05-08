@@ -1,7 +1,7 @@
 import { Dropdown, Menu } from 'antd';
 import { BarsOutlined, FileTextOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import NormalStepFrom from '@/pages/InputStepForms/NormalStepFrom';
+import NormalStepFrom from '@/components/InputStepForms/NormalStepFrom';
 
 export default () => {
   const [visible, setVisible] = useState(false);
