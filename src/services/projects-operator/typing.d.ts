@@ -1,3 +1,5 @@
+import type { ColumnsType } from 'antd/es/table';
+
 declare namespace ProjectApi {
   type singleRuntime = {
     create_date_time: string;
@@ -34,5 +36,40 @@ declare namespace ProjectApi {
   type normalOperatorResult = {
     msg: string;
     code?: number;
+  };
+  type getSqlDataBody = {
+    'db-host': string;
+    'db-port': string;
+    'db-username': string;
+    'db-password': string;
+    'db-database': string;
+  };
+  type getSqlDataResult = {
+    msg?: string;
+    code?: number;
+    data: [
+      {
+        table_name: string;
+        data: [];
+        columns: ColumnsType<Record<string, string>>;
+      },
+    ];
+  };
+  type singleNode = {
+    name: string;
+    type: string;
+  };
+  type singleResult = {
+    nodes: singleNode[];
+    relationships: [];
+  };
+  type buildSandboxViaStructDataBody = {
+    result: singleResult;
+    projectName: string;
+    needEmail: boolean;
+    projectDescription: string;
+  };
+  type buildSandboxViaStructDataResult = {
+    task_id: string;
   };
 }

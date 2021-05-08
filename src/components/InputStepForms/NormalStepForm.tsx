@@ -14,7 +14,7 @@ import { useModel } from '@@/plugin-model/useModel';
 import { useState } from 'react';
 import PollStopCard from '@/components/PollStopCard';
 
-const openNotification = (msg: string) => {
+export const openNotification = (msg: string) => {
   const args = {
     message: 'Warning',
     description: msg,
@@ -26,13 +26,13 @@ const openNotification = (msg: string) => {
 export default () => {
   const [labels, setLabels] = useState<labelType[]>([]);
   const [taskId, setTaskId] = useState<string | undefined>(undefined);
+  const [startPolling, setStartPolling] = useState(false);
   const [needEmail, setNeedEmail] = useState(true);
   const [projectInfo, setProjectInfo] = useState({
     projectName: 'undefined',
     projectDescription: '',
   });
   const [formHash, setFormHash] = useState('');
-  const [startPolling, setStartPolling] = useState(false);
 
   const { nerDocs, setNerDocs } = useModel('nerDocs', (model) => ({
     nerDocs: model.nerDocs,
