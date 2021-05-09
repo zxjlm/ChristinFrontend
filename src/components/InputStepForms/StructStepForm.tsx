@@ -5,6 +5,9 @@ import { useState } from 'react';
 import type { ProjectApi } from '@/services/projects-operator/typing';
 import PollStopCard from '@/components/PollStopCard';
 import { openNotification } from '@/components/InputStepForms/NormalStepForm';
+import Title from 'antd/es/typography/Title';
+import Paragraph from 'antd/es/typography/Paragraph';
+import Text from 'antd/es/typography/Text';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -86,6 +89,49 @@ export default () => {
         },
       }}
     >
+      <StepsForm.StepForm
+        name="instruction"
+        title="说明"
+        onFinish={async () => {
+          await waitTime(1000);
+          return true;
+        }}
+      >
+        <Title level={2}>结构化数据录入说明</Title>
+        <Paragraph>
+          结构化数据录入目前主要针对的是MySQL类型的数据,总共分为<Text mark>三步</Text>.
+        </Paragraph>
+        <Title level={3}>第一步: 数据录入</Title>
+        <Paragraph>
+          数据录入需要输入 <Text mark>项目名称 项目描述 数据库配置</Text> 三个基本信息, 其中,
+          项目名称与数据库配置为必填项.
+        </Paragraph>
+        <Paragraph>
+          在数据库配置中, 需要输入数据库的ip\端口\用户名\密码\数据库名,
+          平台会按照配置检索到对应的数据库并按照 <Text mark>表映射逻辑</Text> 进行数据抽取{' '}
+        </Paragraph>
+        <Paragraph>
+          ps1. 不要使用<Text type={'danger'}>本地的(localhost\127.0.0.1)</Text>数据库, 以及{' '}
+          <Text type={'danger'}>任何外网无法访问</Text> 的数据库{' '}
+        </Paragraph>
+        <Paragraph>
+          ps2. 将网站ip添加至数据库的 <Text type={'warning'}> 远程信任名单</Text>
+        </Paragraph>
+        <Title level={3}>第二步: 审核表单</Title>
+        <Paragraph>
+          平台在会抽取数据库的<Text type={'success'}> 一部分</Text> 数据返回并进行数据核验
+        </Paragraph>
+        <Title level={3}>第三步: 构建图数据库</Title>
+        <Paragraph>
+          图数据库的构建全程由平台的自动化系统完成, 用户
+          <Text type={'success'}> 不需要保持网页焦点</Text> , 在图数据库构建完成后, 会进行邮件通知{' '}
+          <Text type={'secondary'}>(如果选择了邮件通知的话)</Text>.{' '}
+        </Paragraph>
+        <Paragraph>
+          最后, 用户可以通过网站ip的 <Text code>7474</Text>端口进行neo4j原生浏览器访问, 或者根据{' '}
+          <Text mark>项目信息页面提供的链接</Text> 访问网站自开发的图数据库可视化系统.
+        </Paragraph>
+      </StepsForm.StepForm>
       <StepsForm.StepForm name="base" title="数据录入" onFinish={stopOneFinish}>
         <ProFormText
           name="project-name"
