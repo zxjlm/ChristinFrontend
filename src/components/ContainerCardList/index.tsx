@@ -10,14 +10,27 @@ import { useEffect, useState } from 'react';
 import type { runtimeDataProp } from '@/components/ContainerCard';
 import ContainerCard from '@/components/ContainerCard/index';
 import ProjectDetail from '@/components/ProjectDetail/index';
-import styles from './index.less';
 import { useModel } from '@@/plugin-model/useModel';
 import img1 from '@/images/1.png';
 import img2 from '@/images/2.png';
 import img3 from '@/images/3.png';
 import img4 from '@/images/4.png';
+import type { ProjectApi } from '@/services/projects-operator/typing';
 
 const cats = [img1, img2, img3, img4];
+const typeMapper = ['结构化数据', '半结构化数据', '非结构化数据'];
+const typeColorMapper = ['volcano', 'orange', 'geekblue'];
+const statusColorMapper = {
+  creating: 'lime',
+  running: 'green',
+  exited: 'magenta',
+  deleted: 'red',
+};
+const datetimeColorMapper = {
+  danger: 'red',
+  info: 'blue',
+  warning: 'gold',
+};
 
 export default () => {
   const initProjectData: ProjectApi.projectDetailResult = {
@@ -32,6 +45,7 @@ export default () => {
     status: '',
     labels: [],
     update_date_time: '',
+    analyse_type: 0,
   };
 
   const [projectsRuntimeInfo, setProjectsRuntimeInfo] = useState<ProjectApi.runtimeResult>({
@@ -130,7 +144,7 @@ export default () => {
 
   const parserData = (item: ProjectApi.singleRuntime): runtimeDataProp => ({
     title: item.s_project_name,
-    subTitle: <Tag color="#5BD8A6">{item.login_name}</Tag>,
+    subTitle: <Tag color="purple">{item.login_name}</Tag>,
     type: item.status,
     avatar: cats[Math.floor(Math.random() * cats.length)],
     status: item.status,
@@ -142,7 +156,15 @@ export default () => {
       >
         <Row>
           <Col span={6}>项目状态:</Col>
-          <Col span={10}>{item.status}</Col>
+          <Col span={10}>
+            <Tag color={statusColorMapper[item.status]}>{item.status}</Tag>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>项目类型:</Col>
+          <Col span={10}>
+            <Tag color={typeColorMapper[item.analyse_type]}>{typeMapper[item.analyse_type]}</Tag>
+          </Col>
         </Row>
         <Row>
           <Col span={6}>子任务进度:</Col>
@@ -152,8 +174,10 @@ export default () => {
         </Row>
         <Row>
           <Col span={6}>创建日期:</Col>
-          <Col className={styles[item.badge_color]}>
-            {new Date(Date.parse(item.create_date_time)).toLocaleString()}
+          <Col>
+            <Tag color={datetimeColorMapper[item.badge_color]}>
+              {new Date(Date.parse(item.create_date_time)).toLocaleString()}
+            </Tag>
           </Col>
         </Row>
         <Row>

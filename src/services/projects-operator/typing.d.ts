@@ -10,6 +10,7 @@ declare namespace ProjectApi {
     status: string;
     mark: string;
     badge_color: string;
+    analyse_type: number;
   };
   type runtimeResult = {
     running: singleRuntime[];
@@ -26,7 +27,8 @@ declare namespace ProjectApi {
     status: string;
     mark: string;
     badge_color: string;
-    data: [];
+    analyse_type: number;
+    data: any;
     labels: [];
     remark: {
       port: string;
@@ -64,7 +66,7 @@ declare namespace ProjectApi {
     relationships: [];
   };
   type buildSandboxViaStructDataBody = {
-    result: singleResult;
+    data: singleResult;
     projectName: string;
     needEmail: boolean;
     projectDescription: string;

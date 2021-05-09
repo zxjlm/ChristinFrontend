@@ -58,7 +58,7 @@ export default () => {
     const postData: ProjectApi.buildSandboxViaStructDataBody = {
       projectName: projectInfo.projectName,
       projectDescription: projectInfo.projectDescription,
-      result: { nodes: result_nodes, relationships: [] },
+      data: { nodes: result_nodes, relationships: [] },
       needEmail,
     };
     if (formHash !== JSON.stringify(postData)) {
