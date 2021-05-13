@@ -16,6 +16,7 @@ import img2 from '@/images/2.png';
 import img3 from '@/images/3.png';
 import img4 from '@/images/4.png';
 import type { ProjectApi } from '@/services/projects-operator/typing';
+import Text from 'antd/es/typography/Text';
 
 const cats = [img1, img2, img3, img4];
 const typeMapper = ['结构化数据', '半结构化数据', '非结构化数据'];
@@ -46,6 +47,8 @@ export default () => {
     labels: [],
     update_date_time: '',
     analyse_type: 0,
+    current_step: 4,
+    total_step: 4,
   };
 
   const [projectsRuntimeInfo, setProjectsRuntimeInfo] = useState<ProjectApi.runtimeResult>({
@@ -68,7 +71,7 @@ export default () => {
 
     const deleted = () => {
       message
-        .loading('操作中..', 1)
+        .loading('操作中..', 1.5)
         .then(() => project_deleted(cardId))
         .then((response) => message.success(response.msg, 1.5))
         .then(() => {
@@ -78,7 +81,7 @@ export default () => {
 
     const exited = () => {
       message
-        .loading('操作中..', 1)
+        .loading('操作中..', 1.5)
         .then(() => project_exited(cardId))
         .then((response) => message.success(response.msg, 1.5))
         .then(() => {
@@ -88,7 +91,7 @@ export default () => {
 
     const start = () => {
       message
-        .loading('操作中..', 1)
+        .loading('操作中..', 1.5)
         .then(() => project_start(cardId))
         .then((response) => message.success(response.msg, 1.5))
         .then(() => {
@@ -119,7 +122,13 @@ export default () => {
 
     switch (status) {
       case 'creating':
-        return <Menu>{view_node}</Menu>;
+        return (
+          <Menu>
+            <Menu.Item>
+              <Text>创建状态的项目不接受任何操作</Text>
+            </Menu.Item>
+          </Menu>
+        );
       case 'running':
         return (
           <Menu>
@@ -169,7 +178,7 @@ export default () => {
         <Row>
           <Col span={6}>子任务进度:</Col>
           <Col span={10}>
-            <Progress percent={100} />
+            <Progress percent={(item.current_step / item.total_step) * 100} status={'active'} />
           </Col>
         </Row>
         <Row>

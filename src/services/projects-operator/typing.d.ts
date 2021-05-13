@@ -11,6 +11,8 @@ declare namespace ProjectApi {
     mark: string;
     badge_color: string;
     analyse_type: number;
+    current_step: number;
+    total_step: number;
   };
   type runtimeResult = {
     running: singleRuntime[];
@@ -28,6 +30,8 @@ declare namespace ProjectApi {
     mark: string;
     badge_color: string;
     analyse_type: number;
+    current_step: number;
+    total_step: number;
     data: any;
     labels: [];
     remark: {
