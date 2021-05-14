@@ -61,6 +61,10 @@ declare namespace ProjectApi {
       },
     ];
   };
+  type getJsonBody = {
+    data: [];
+  };
+  type getJsonResult = any;
   type singleNode = {
     name: string;
     type: string;

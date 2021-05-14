@@ -73,3 +73,12 @@ export const buildSandboxViaStructData = async (body: ProjectApi.buildSandboxVia
       data: body,
     },
   );
+
+export const getJsonData = async (body: ProjectApi.getJsonBody) =>
+  request<ProjectApi.getJsonResult>('/main/api/v2/knowledge_extract_from_json', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+  });

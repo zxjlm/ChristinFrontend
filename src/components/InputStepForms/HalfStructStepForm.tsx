@@ -1,11 +1,104 @@
-import { message } from 'antd';
-import { StepsForm } from '@ant-design/pro-form';
+import { Divider, List, message, Modal, Popover, Space, Switch, Tag } from 'antd';
+import {
+  ProFormText,
+  ProFormTextArea,
+  ProFormUploadDragger,
+  StepsForm,
+} from '@ant-design/pro-form';
 import { waitTime } from '@/utils/useful';
 import Title from 'antd/es/typography/Title';
 import Paragraph from 'antd/es/typography/Paragraph';
 import Text from 'antd/es/typography/Text';
+import { useState } from 'react';
+import { buildSandboxViaStructData, getJsonData } from '@/services/projects-operator/api';
+import { typeColorMapper } from '@/components/ProjectDetail';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { openNotification } from '@/components/InputStepForms/NormalStepForm';
+import PollStopCard from '@/components/PollStopCard';
+
+const { confirm } = Modal;
 
 export default () => {
+  const [projectInfo, setProjectInfo] = useState({
+    projectName: 'undefined',
+    projectDescription: '',
+  });
+  const [entsData, setEntsData] = useState<{ s_name: string; type: string }[]>([]);
+  const [needEmail, setNeedEmail] = useState(true);
+  const [formHash, setFormHash] = useState('');
+  const [taskId, setTaskId] = useState<string | undefined>(undefined);
+  const [startPolling, setStartPolling] = useState(false);
+
+  const stepOneFinish = async (formData: Record<string, any>) => {
+    const postData = formData['json-files']
+      .filter((item: { status: string }) => item.status === 'done')
+      .map((item: { response: any }) => item.response.data);
+    getJsonData(postData.flat())
+      .then((response) => {
+        setEntsData(response.data);
+        setProjectInfo({
+          projectName: formData['project-name'],
+          projectDescription: formData['project-description'],
+        });
+      })
+      .catch((response) => {
+        message.warning(response.msg);
+        return false;
+      });
+    return true;
+  };
+
+  const stepTwoFinish = async () => {
+    const validateEnts = {
+      nodes: entsData.map((item) => ({ name: item.s_name, ...item })),
+      relationships: [],
+    };
+    const postData: any = {
+      projectName: projectInfo.projectName,
+      projectDescription: projectInfo.projectDescription,
+      data: validateEnts,
+      needEmail,
+    };
+    if (formHash !== JSON.stringify(postData)) {
+      buildSandboxViaStructData(postData).then((response) => {
+        setTaskId(response.task_id);
+        setFormHash(JSON.stringify(postData));
+      });
+    } else {
+      openNotification('表单未曾发生改变, 默认不进行提交');
+      setStartPolling(!startPolling);
+    }
+    return true;
+  };
+
+  const closeTagHandler = (e: any) => {
+    const name = e.target.parentNode.parentNode.parentNode.innerText;
+    e.preventDefault();
+
+    confirm({
+      title: 'Do you Want to delete these items?',
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        setEntsData(entsData.filter((item) => item.s_name !== name));
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
+  const entPropertiesList = (node: Record<string, string>) => (
+    <List
+      size="small"
+      dataSource={Object.entries(node)}
+      renderItem={(item) => (
+        <List.Item>
+          {item[0]} : {item[1]}
+        </List.Item>
+      )}
+    />
+  );
+
   return (
     <StepsForm
       onFinish={async (values) => {
@@ -57,9 +150,67 @@ export default () => {
           <Text mark>项目信息页面提供的链接</Text> 访问网站自开发的图数据库可视化系统.
         </Paragraph>
       </StepsForm.StepForm>
-      <StepsForm.StepForm name="base" title="数据录入" />
-      <StepsForm.StepForm name="checkbox" title="审核数据" />
-      <StepsForm.StepForm name="time" title="构建图数据库" />
+      <StepsForm.StepForm name="base" title="数据录入" onFinish={stepOneFinish}>
+        <div style={{ marginLeft: '30px' }}>
+          <ProFormText
+            name="project-name"
+            label="项目名称"
+            width="md"
+            tooltip="最长为 24 位，用于标定的唯一 id"
+            placeholder="请输入项目名称"
+            rules={[{ required: true }]}
+          />
+          <ProFormTextArea
+            name="project-description"
+            label="项目描述"
+            width="lg"
+            placeholder="请输入项目描述(250字以内)"
+            initialValue={'无'}
+          />
+        </div>
+        <ProFormUploadDragger
+          max={4}
+          name="json-files"
+          title={'从JSON文件导入'}
+          description={'目前只支持中药数据'}
+          accept={'.json'}
+          action={'/main/api/v2/extract_from_json'}
+        />
+      </StepsForm.StepForm>
+      <StepsForm.StepForm name="checkbox" title="审核数据" onFinish={stepTwoFinish}>
+        {Object.entries(typeColorMapper).map((item) => (
+          <Tag key={item[0]} color={item[1]}>
+            {item[0]}
+          </Tag>
+        ))}
+        <Divider />
+        <Title level={2}>解析结果</Title>
+        <Space direction="vertical" style={{ marginBottom: '50px' }}>
+          {entsData.map((node) => (
+            <Popover
+              content={entPropertiesList(node)}
+              title={node.s_name}
+              key={node.s_name}
+              placement={'right'}
+            >
+              <Tag color={typeColorMapper[node.type]} closable={true} onClose={closeTagHandler}>
+                {node.s_name}
+              </Tag>
+            </Popover>
+          ))}
+        </Space>
+        <div style={{ marginLeft: '30px', marginTop: '10px', marginBottom: '20px' }}>
+          <Switch
+            checkedChildren={'使用邮件通知'}
+            unCheckedChildren={'不需要邮件'}
+            defaultChecked={true}
+            onChange={(checked) => setNeedEmail(checked)}
+          />
+        </div>
+      </StepsForm.StepForm>
+      <StepsForm.StepForm name="time" title="构建图数据库">
+        <PollStopCard taskId={taskId} startPolling={startPolling} />
+      </StepsForm.StepForm>
     </StepsForm>
   );
 };
