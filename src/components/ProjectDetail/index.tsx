@@ -107,7 +107,7 @@ export default ({ projectData }: { projectData: ProjectApi.projectDetailResult }
         {mainForm}
         <Button
           type={'primary'}
-          href={`http://localhost:8081/christin-graph/${projectData.remark.port}/${projectData.remark.password}`}
+          href={`http://localhost/christin-graph/${projectData.remark.port}/${projectData.remark.password}`}
           style={{ marginLeft: '45%' }}
         >
           前往数据库

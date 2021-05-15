@@ -2,27 +2,24 @@ import {
   AlipayCircleOutlined,
   LockOutlined,
   MobileOutlined,
-  TaobaoCircleOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
-import {Space, message, Tabs} from 'antd';
-import React, {useState} from 'react';
-import ProForm, {ProFormCaptcha, ProFormCheckbox, ProFormText} from '@ant-design/pro-form';
-import {useIntl, Link, history, FormattedMessage, SelectLang, useModel} from 'umi';
+import { Space, message, Tabs } from 'antd';
+import React, { useState } from 'react';
+import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import {login} from '@/services/ant-design-pro/api';
-import {getFakeCaptcha} from '@/services/ant-design-pro/login';
+import { login } from '@/services/ant-design-pro/api';
+import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
-
 
 /** 此方法会跳转到 redirect 参数所在的位置 */
 const goto = () => {
   if (!history) return;
   setTimeout(() => {
-    const {query} = history.location;
-    const {redirect} = query as { redirect: string };
+    const { query } = history.location;
+    const { redirect } = query as { redirect: string };
     history.push(redirect || '/');
   }, 10);
 };
@@ -31,7 +28,7 @@ const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   // const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
-  const {initialState, setInitialState} = useModel('@@initialState');
+  const { initialState, setInitialState } = useModel('@@initialState');
 
   const intl = useIntl();
 
@@ -49,7 +46,7 @@ const Login: React.FC = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await login({...values, type});
+      const msg = await login({ ...values, type });
       if (msg.meta.code === 200) {
         const defaultloginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
@@ -76,17 +73,17 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.lang}>{SelectLang && <SelectLang/>}</div>
+      <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
       <div className={styles.content}>
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src="/logo.svg"/>
-              <span className={styles.title}>Ant Design</span>
+              <img alt="logo" className={styles.logo} src="/small-blue.png" />
+              <span className={styles.title}>Christin</span>
             </Link>
           </div>
           <div className={styles.desc}>
-            {intl.formatMessage({id: 'pages.layouts.userLayout.title'})}
+            {intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           </div>
         </div>
 
@@ -138,7 +135,7 @@ const Login: React.FC = () => {
                   name="email"
                   fieldProps={{
                     size: 'large',
-                    prefix: <UserOutlined className={styles.prefixIcon}/>,
+                    prefix: <UserOutlined className={styles.prefixIcon} />,
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.username.placeholder',
@@ -160,7 +157,7 @@ const Login: React.FC = () => {
                   name="password"
                   fieldProps={{
                     size: 'large',
-                    prefix: <LockOutlined className={styles.prefixIcon}/>,
+                    prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
@@ -186,7 +183,7 @@ const Login: React.FC = () => {
                 <ProFormText
                   fieldProps={{
                     size: 'large',
-                    prefix: <MobileOutlined className={styles.prefixIcon}/>,
+                    prefix: <MobileOutlined className={styles.prefixIcon} />,
                   }}
                   name="mobile"
                   placeholder={intl.formatMessage({
@@ -217,7 +214,7 @@ const Login: React.FC = () => {
                 <ProFormCaptcha
                   fieldProps={{
                     size: 'large',
-                    prefix: <LockOutlined className={styles.prefixIcon}/>,
+                    prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
                   captchaProps={{
                     size: 'large',
@@ -268,26 +265,24 @@ const Login: React.FC = () => {
               }}
             >
               <ProFormCheckbox noStyle name="remember_me">
-                <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
+                <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
               </ProFormCheckbox>
               <a
                 style={{
                   float: 'right',
                 }}
               >
-                <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
+                <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
               </a>
             </div>
           </ProForm>
           <Space className={styles.other}>
-            <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式"/>
-            <AlipayCircleOutlined className={styles.icon}/>
-            <TaobaoCircleOutlined className={styles.icon}/>
-            <WeiboCircleOutlined className={styles.icon}/>
+            <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
+            <AlipayCircleOutlined className={styles.icon} />
           </Space>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
